@@ -1,0 +1,52 @@
+{
+  "name": "redux-hypercube",
+  "version": "1.0.0",
+  "description": "",
+  "main": "redux-hypercube.js",
+  "scripts": {
+    "browserify": "browserify -r ./${npm_package_main}:${npm_package_name} -o dist/${npm_package_name}.js",
+    "build": "npm run browserify; npm run minify",
+    "check-deps": "npm outdated",
+    "minify": "cd dist; uglifyjs ${npm_package_name}.js --source-map --output ${npm_package_name}.min.js --compress --mangle -b beautify=false; cd -",
+    "postversion": "git push origin v${npm_package_version}; npm publish; git push origin master",
+    "test": "NODE_PATH=. tape test/**/*.js"
+  },
+  "pre-commit": [
+    "test",
+    "check-deps"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/boweihan/redux-hypercube.git"
+  },
+  "keywords": [
+    "olap",
+    "redux",
+    "data",
+    "warehouse",
+    "state",
+    "machine",
+    "table",
+    "cube",
+    "hypercube",
+    "state-machine"
+  ],
+  "author": "Bowei Han",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/boweihan/redux-hypercube/issues"
+  },
+  "homepage": "https://github.com/boweihan/redux-hypercube#readme",
+  "devDependencies": {
+    "browserify": "^16.2.2",
+    "deep-freeze": "0.0.1",
+    "pre-commit": "^1.2.2",
+    "tape": "^4.8.0",
+    "uglify-es": "^3.3.9"
+  },
+  "dependencies": {
+    "not-defined": "^2.0.1",
+    "static-props": "^1.1.1",
+    "strict-mode": "^1.1.2"
+  }
+}
