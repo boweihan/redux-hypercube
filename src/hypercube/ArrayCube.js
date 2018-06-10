@@ -1,17 +1,23 @@
+const InputValidator = require('./InputValidator');
+
 class ArrayCube {
   /**
    * Create an ArrayCube
    * @param {Object} config
-   * @param {Array} config.dimensions
-   * @param {Array} config.members
+   * @param {Array<String>} config.dimensions
+   * @param {Array<Array<String>>} config.members
+   * @param {Array<Object>} config.intersections
    */
   constructor(config) {
+    InputValidator.validateConfig(config);
     this.config = {
       dimensions: [],
       members: [],
+      intersections: [],
       ...config,
     };
-    this.cube = this.createNDimArray(config.dimensions);
+    const dims = this.config.members.map(dimMembers => dimMembers.length);
+    this.impl = this.createCube(dims);
   }
 
   /**
@@ -20,11 +26,11 @@ class ArrayCube {
    * @returns {Array} n-dimensional array cube
    */
   createCube(dimensions) {
-    var dim = dimensions[0];
-    var rest = dimensions.slice(1);
-    var cube = new Array();
-    for (var i = 0; i < dim; i++) {
-      cube[i] = createNDimArray(rest);
+    const dim = dimensions[0];
+    const rest = dimensions.slice(1);
+    const cube = [];
+    for (let i = 0; i < dim; i += 1) {
+      cube[i] = this.createCube(rest);
     }
     return cube;
   }
@@ -35,43 +41,58 @@ class ArrayCube {
    * @returns {Array} n-dimensional cube slice
    */
   getElement(indices) {
-    if (!indices || indices.length == 0) {
-      return this.cube;
-    } else {
-      return getElement(this.cube[indices[0]], indices.slice(1));
+    if (!indices || indices.length === 0) {
+      return this.impl;
     }
+    return this.getElement(this.impl[indices[0]], indices.slice(1));
+  }
+
+  /**
+   * helper to retrieve an array of members corresponding to a dimension
+   * @param {String} dimension
+   * @returns {Array<String>} members
+   */
+  getMembersForDimension(dimension) {
+    const memberIndex = this.config.dimensions.indexOf(dimension);
+    if (memberIndex !== -1) {
+      return this.config.members[memberIndex];
+    }
+    return [];
   }
 
   /**
    * slice - analyze data for a single dimension
    * example: what were the sales in June of last year?
+   * @param {String} dimension - dimension key
+   * @param {Array<String>} members - members to filter by
+   * @returns {Array<Object>} intersection values
    */
-  slice(dimension, filter) {
-    let points = [];
-    let data = [];
-
-    const dimensionIndex = this.config.dimensions.indexOf(dimension);
-
-    if (dimensionIndex === -1) {
-      throw new TypeError('dimension not found', dimension);
-    }
-
-    this.points.forEach((point, i) => {
-      // Add slice if it matches given filter.
-      if (point[dimensionIndex] === filter) {
-        data.push(this.data[i]);
-        points.push(this.points[i]);
-      }
+  slice(dimension, members) {
+    InputValidator.validateSlice(dimension, this.config.dimensions, members);
+    return this.config.intersections.filter(intersection => {
+      return members.indexOf(intersection[dimension]) !== -1;
     });
-
-    return new Table(Object.assign({}, structure, { points, data }));
   }
 
   /**
-   * dice - analyize data for more than one dimension
+   * dice - analyze data for more than one dimension
    * example: what were our sales in June of last year in New York state?
+   * @param {Object} diceObj - { dimension: Array<Member> ...}
    */
-  dice() {}
+  dice(diceObj) {
+    InputValidator.validateDice(diceObj);
+    const dimensions = Object.keys(diceObj);
+    return this.config.intersections.filter(intersection => {
+      for (let i = 0; i < dimensions.length; i += 1) {
+        if (
+          diceObj[dimensions[i]].indexOf(intersection[dimensions[i]]) === -1
+        ) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }
 
   /**
    * drillUp - analyze data at most summarized level

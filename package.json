@@ -40,6 +40,9 @@
   "devDependencies": {
     "browserify": "^16.2.2",
     "deep-freeze": "0.0.1",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.12.0",
     "pre-commit": "^1.2.2",
     "tape": "^4.8.0",
     "uglify-es": "^3.3.9"
