@@ -1,6 +1,6 @@
 # redux-hypercube
 
-<img src='./hypercube.png' width=500 />
+<img src='./hypercube.png' width=300 />
 
 A state machine library for Redux that is backed by a hypercube.
 
