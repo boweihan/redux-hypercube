@@ -4,6 +4,9 @@
 
 A state machine library for Redux that is backed by a hypercube.
 
+<a>https://en.wikipedia.org/wiki/Hypercube</a>
+
+Commonly used in BI as an OLAP cube:
 <a>https://en.wikipedia.org/wiki/OLAP_cube</a>
 
 ### Modelling all possible UI states
@@ -35,7 +38,7 @@ Each of these possibilities corresponds to a certain UI state.
 * LOGGED_OUT / LOGIN_IDLE / VALID - shows a standard login screen.
 * LOGGED_OUT / LOGIN_PENDING / VALID - shows a spinner indicating login in progress.
 
-In typical front-end applications it's a challenge to identify all possible application states - forgetting to handle a certain state is often one of the main causes of UI bugs. This is where a hypercube (OLAP in BI terms) representation of application state comes in quite handy. Modelling application state (along with their possible transitions) as intersections in a hypercube gives us:
+In typical front-end applications it's a challenge to identify all possible application states - forgetting to handle a certain state is often one of the main causes of UI bugs. This is where a hypercube representation of application state comes in quite handy. Modelling application state (along with their possible transitions) as intersections in a hypercube gives us:
 
 1. The ability to identify and query all possible application states in an application with varying levels of granularity.
 2. The ability to model application state and their transitions as a graph.
